@@ -1,4 +1,4 @@
-package quickstart.examples
+package _01getting_started.examples
 
 import scala.util.chaining._
 import util._

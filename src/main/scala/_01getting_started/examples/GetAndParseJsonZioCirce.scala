@@ -1,4 +1,4 @@
-package quickstart.examples
+package _01getting_started.examples
 
 import util._
 

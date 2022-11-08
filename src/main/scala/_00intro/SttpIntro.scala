@@ -1,4 +1,4 @@
-package quickstart
+package _00intro
 
 import scala.util.chaining._
 import util._
@@ -14,10 +14,11 @@ object SttpIntro extends App {
 
   // the `query` parameter is automatically url-encoded
   // `sort` is removed, as the value is not defined
-  val request = basicRequest.get(uri"https://api.github.com/search/repositories?q=$query&sort=$sort")
+  val request: Request[Either[String, String], Any] =
+    basicRequest.get(uri"https://api.github.com/search/repositories?q=$query&sort=$sort")
 
-  val backend  = HttpClientSyncBackend()
-  val response = request.send(backend)
+  val backend: SttpBackend[Identity, Any]        = HttpClientSyncBackend()
+  val response: Response[Either[String, String]] = request.send(backend)
 
   // response.header(...): Option[String]
   println(response.header("Content-Length"))
