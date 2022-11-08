@@ -43,7 +43,7 @@ lazy val root = (project in file("."))
       sttpSlf4j,
       sttpAkkaHttp,
       sttpZio,
-      // sttpFs2,
+      sttpFs2,
       // sttpMonix,
       sttpJson4s,
       sttpCirce,
