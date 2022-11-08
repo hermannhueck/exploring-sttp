@@ -3,6 +3,7 @@ package object util {
   def line(length: Int): String =
     "\u2500" * length
 
+  val line5  = line(5)
   val line10 = line(10)
   val line20 = line(20)
   val line80 = line(80)

@@ -9,8 +9,9 @@ object DottyContributors extends App {
 
   line80.green pipe println
 
-  val repo = "lampepfl/dotty"
-  val uri  = uri"https://api.github.com/repos/$repo/contributors"
+  val user = "lampepfl"
+  val repo = "dotty"
+  val uri  = uri"https://api.github.com/repos/$user/$repo/contributors"
 
   val request: Request[Either[String, String], Any] = basicRequest.get(uri)
 
@@ -25,9 +26,7 @@ object DottyContributors extends App {
   //       case Left(parseError)    =>
   //         println(s"JSON parse error: $parseError")
   //       case Right(contributors) =>
-  //         contributors.foreach { case login -> contributions =>
-  //           println(s"Contributor ${login} made ${contributions} contributions")
-  //         }
+  //         printContributors(contributors)
   //     }
   // }
 
@@ -39,11 +38,17 @@ object DottyContributors extends App {
 
   result match {
     case Left(error)         =>
-      println(s"HTTP request error or JSON parse error: $error")
+      println(s"HTTP request error or JSON parse error: $error".red)
     case Right(contributors) =>
-      contributors.foreach { case login -> contributions =>
-        println(s"Contributor ${login} made ${contributions} contributions")
-      }
+      printContributors(contributors)
+  }
+
+  def printContributors(contributors: List[(String, Int)]): Unit = {
+    s"$line5 Contributors of repo $user/$repo $line10".cyan pipe println
+    contributors.foreach { case login -> contributions =>
+      println(s"Contributor ${login} made ${contributions} contributions")
+    }
+    s"Repo $repo has ${contributors.size} contributors who made ${contributors.map(_._2).sum} contributions in total.".cyan pipe println
   }
 
   import io.circe._
