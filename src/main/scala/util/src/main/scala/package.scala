@@ -19,15 +19,15 @@ package object util {
     @inline def cyan: String                  = color(Console.CYAN)
   }
 
-  implicit final class EitherOps[L, R](private val either: Either[L, R]) extends AnyVal {
+  // implicit final class EitherOps[L, R](private val either: Either[L, R]) extends AnyVal {
 
-    @inline def biMap[L2, R2](fl: L => L2, fr: R => R2): Either[L2, R2] =
-      either match {
-        case Left(l)  => Left(fl(l))
-        case Right(r) => Right(fr(r))
-      }
+  //   @inline def biMap[L2, R2](fl: L => L2, fr: R => R2): Either[L2, R2] =
+  //     either match {
+  //       case Left(l)  => Left(fl(l))
+  //       case Right(r) => Right(fr(r))
+  //     }
 
-    @inline def leftMap[L2](f: L => L2): Either[L2, R] =
-      biMap(f, identity)
-  }
+  //   @inline def leftMap[L2](f: L => L2): Either[L2, R] =
+  //     biMap(f, identity)
+  // }
 }
