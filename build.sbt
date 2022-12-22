@@ -36,28 +36,5 @@ lazy val root = (project in file("."))
     name                              := projectName,
     description                       := projectDescription,
     Compile / console / scalacOptions := consoleScalacOptions,
-    libraryDependencies ++= Seq(
-      sttpCore,
-      sttpOkhttp,
-      sttpUPickle,
-      sttpSlf4j,
-      sttpAkkaHttp,
-      sttpZio,
-      sttpFs2,
-      // sttpMonix,
-      sttpJson4s,
-      sttpCirce,
-      json4sNative,
-      akkaStream,
-      circeGeneric,
-      // circeCore,
-      // circeParser,
-      // newtype,
-      slf4jApi,
-      slf4jSimple,
-      kindProjectorPlugin,
-      betterMonadicForPlugin
-    ) ++ Seq(
-      munit
-    ) // .map(_ % Test)
+    libraryDependencies ++= Dependencies.allDependencies
   )
