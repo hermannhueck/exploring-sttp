@@ -1,4 +1,4 @@
-package _05other_topics.jsonsupport_upickle
+package _05other_topics.contributors_upickle
 
 import scala.util.chaining._
 import util._
@@ -20,8 +20,7 @@ object DottyContributors01a extends App {
   val response: Response[Either[String, String]] =
     request.send(backend)
 
-  // 'Serializable' is the common supertype of 'Error' and 'String'
-  val result: Either[Serializable, List[Contributor]] = for {
+  val result: Either[String, List[Contributor]] = for {
     body         <- response.body
     contributors <- parseBody(body)
   } yield contributors
@@ -44,7 +43,6 @@ object DottyContributors01a extends App {
   } yield contributors.sortBy(_.contributions).reverse
 
   def contributorJson2Contributor(contributorJson: ujson.Value): Either[String, Contributor] = {
-    import scala.util.Try
     val tryy: Try[Contributor] = for {
       login         <- Try(contributorJson("login").str)
       contributions <- Try(contributorJson("contributions").num.toInt)

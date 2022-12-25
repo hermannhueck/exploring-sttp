@@ -1,4 +1,4 @@
-package _05other_topics.jsonsupport_upickle
+package _05other_topics.jsonsupport
 
 import scala.util.chaining._
 import util._
@@ -31,7 +31,7 @@ object JsonSupportUPickle extends App {
   // println(s"Response:\n$response")
   // line10.cyan pipe println
 
-  // response.body.fold(ex => println(ex), payload => println(s"Response payload:\n$payload"))
+  response.body.fold(ex => println(ex), payload => println(s"Response payload:\n$payload"))
 
   line80.green pipe println
 }

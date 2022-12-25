@@ -11,7 +11,8 @@ object SimpleQuickstartOkhttp extends App {
 
   line80.green pipe println
 
-  val uri: Uri                      = uri"https://httpbin.org/ip"
+  val uri: Uri = uri"https://httpbin.org/ip"
+
   val request: Request[String, Any] = quickRequest.get(uri)
 
   val response: Response[String] = request.send(backend) tap println

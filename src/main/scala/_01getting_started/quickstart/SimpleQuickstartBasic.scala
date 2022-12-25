@@ -10,7 +10,8 @@ object SimpleQuickstartBasic extends App {
 
   line80.green pipe println
 
-  val uri: Uri                                      = uri"https://httpbin.org/post?hello=world"
+  val uri: Uri = uri"https://httpbin.org/post?hello=world"
+
   val request: Request[Either[String, String], Any] =
     basicRequest
       .body("Hello, world!")

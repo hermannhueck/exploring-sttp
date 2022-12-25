@@ -4,6 +4,7 @@ import scala.util.chaining._
 import util._
 
 import sttp.client3._
+import cats.implicits._
 
 object DottyContributors extends App {
 
@@ -15,26 +16,15 @@ object DottyContributors extends App {
 
   val request: Request[Either[String, String], Any] = basicRequest.get(uri)
 
-  val backend: SttpBackend[Identity, Any]        = HttpClientSyncBackend()
-  val response: Response[Either[String, String]] = request.send(backend)
+  // val backend: SttpBackend[Identity, Any]        = HttpClientSyncBackend()
+  // val response: Response[Either[String, String]] = request.send(backend)
+  // is the same as:
+  // val response: Response[Either[String, String]] = SimpleHttpClient().send(request)
+  // is the same as:
+  val response: Response[Either[String, String]] = quick.simpleHttpClient.send(request)
 
-  // response.body match {
-  //   case Left(requestError) =>
-  //     println(s"HTTP request error: $requestError")
-  //   case Right(body)        =>
-  //     parseBody(body) match {
-  //       case Left(parseError)    =>
-  //         println(s"JSON parse error: $parseError")
-  //       case Right(contributors) =>
-  //         printContributors(contributors)
-  //     }
-  // }
-
-  // 'Serializable' is the common supertype of 'Error' and 'String'
-  val result: Either[Serializable, List[(String, Int)]] = for {
-    body         <- response.body
-    contributors <- parseBody(body)
-  } yield contributors
+  val result: Either[String, List[(String, Int)]] =
+    response.body.flatMap(parseBody).leftMap(_.toString)
 
   result match {
     case Left(error)         =>
@@ -44,11 +34,13 @@ object DottyContributors extends App {
   }
 
   def printContributors(contributors: List[(String, Int)]): Unit = {
-    s"$line5 Contributors of repo $user/$repo $line10".cyan pipe println
-    contributors.foreach { case login -> contributions =>
-      println(s"Contributor ${login} made ${contributions} contributions")
-    }
+    // s"$line5 Contributors of repo $user/$repo $line10".cyan pipe println
+    // contributors.foreach { case login -> contributions =>
+    //   println(s"Contributor ${login} made ${contributions} contributions")
+    // }
     s"Repo $repo has ${contributors.size} contributors who made ${contributors.map(_._2).sum} contributions in total.".cyan pipe println
+    val mostBusyContributor = contributors.maxBy(_._2)
+    s"The most busy contributor of repo $repo is '${mostBusyContributor._1}' with ${mostBusyContributor._2} contributions.".cyan pipe println
   }
 
   import io.circe._

@@ -15,6 +15,7 @@ object StreamFs2 extends App {
   line80.green pipe println
 
   def streamRequestBody(backend: SttpBackend[IO, Fs2Streams[IO]]): IO[Unit] = {
+
     val stream: Stream[IO, Byte] = Stream.emits("Hello, world".getBytes)
 
     basicRequest

@@ -1,11 +1,13 @@
-package _05other_topics.jsonsupport_circe
+package _05other_topics.contributors_circe
 
 import scala.util.chaining._
 import util._
 
 import sttp.client3._
+import sttp.client3.circe._
+import io.circe._
 
-object DottyContributors01 extends App {
+object DottyContributors02 extends App {
 
   line80.green pipe println
 
@@ -15,11 +17,14 @@ object DottyContributors01 extends App {
 
   final case class Contributor(login: String, contributions: Int)
 
-  val request: Request[Either[String, String], Any] = basicRequest.get(uri)
+  val request: Request[Either[ResponseException[String, io.circe.Error], List[Json]], Any] =
+    basicRequest
+      .get(uri)
+      .response(asJson[List[Json]])
 
-  val backend: SttpBackend[Identity, Any]        =
+  val backend: SttpBackend[Identity, Any]                                               =
     HttpClientSyncBackend()
-  val response: Response[Either[String, String]] =
+  val response: Response[Either[ResponseException[String, io.circe.Error], List[Json]]] =
     request.send(backend)
 
   // println(s"Response:\n$response")
@@ -39,18 +44,15 @@ object DottyContributors01 extends App {
       printContributorsSummary(s"$user/$repo", contributors.size, contributors.map(_.contributions).sum)
   }
 
-  import io.circe._
   import cats.implicits._
 
   // parse body as JSON
-  def parseBody(body: String): Either[Error, List[Contributor]] =
-    for {
-      json             <- io.circe.parser.parse(body)
-      contributorsJson <- json.hcursor.as[List[Json]]
-      contributors     <- contributorsJson.traverse(contributorJson2Contributor)
-    } yield contributors
-      .sortBy(_.contributions)
-      .reverse
+  def parseBody(contributorsJson: List[Json]) = // : Either[Error, List[Contributor]] =
+    contributorsJson
+      .traverse(contributorJson2Contributor)
+      .map { contributors =>
+        contributors.sortBy(_.contributions).reverse
+      }
 
   def contributorJson2Contributor(contributorJson: Json): Either[Error, Contributor] =
     for {

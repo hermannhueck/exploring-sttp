@@ -6,10 +6,10 @@ import util._
 import sttp.model.Uri
 import sttp.client3.{basicRequest, Request, Response, ResponseException, SimpleHttpClient, UriContext}
 import sttp.client3.circe._
-// automatically converts between JSON and case classes
+// automatically converts between JSON and case classes or ADTs
 import io.circe.generic.auto._
 
-object SyncClientWithJsonCirce extends App {
+object SyncClientWithJsonCirceAuto extends App {
 
   line80.green pipe println
 
@@ -19,8 +19,8 @@ object SyncClientWithJsonCirce extends App {
   // selected fields from the JSON that is being returned by httpbin
   case class HttpBinResponse(origin: String, headers: Map[String, String])
 
-  val uri: Uri                                                                             =
-    uri"https://httpbin.org/post"
+  val uri: Uri = uri"https://httpbin.org/post"
+
   val request: Request[Either[ResponseException[String, Exception], HttpBinResponse], Any] =
     basicRequest
       .post(uri)

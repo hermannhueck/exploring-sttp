@@ -1,4 +1,4 @@
-package _05other_topics.jsonsupport_upickle
+package _05other_topics.contributors_upickle
 
 import scala.util.chaining._
 import util._
@@ -6,7 +6,7 @@ import util._
 import sttp.client3._
 import sttp.client3.upicklejson._
 
-object DottyContributors02a extends App {
+object DottyContributors02b extends App {
 
   line80.green pipe println
 
@@ -43,18 +43,18 @@ object DottyContributors02a extends App {
       printMostBusyContributor(s"$user/$repo", contributors)
   }
 
-  def parseBody(contributorsJson: List[ujson.Value]): Either[String, List[Contributor]] =
-    contributorsJson
-      .traverse(contributorJson2Contributor)
-      .map(_.sortBy(_.contributions).reverse)
+  import scala.util.Try
 
-  def contributorJson2Contributor(contributorJson: ujson.Value): Either[String, Contributor] = {
-    import scala.util.Try
-    val tryy: Try[Contributor] = for {
-      login         <- Try(contributorJson("login").str)
-      contributions <- Try(contributorJson("contributions").num.toInt)
-    } yield Contributor(login, contributions)
-    tryy.toEither.leftMap(_.toString)
+  def parseBody(contributorsJson: List[ujson.Value]): Either[String, List[Contributor]] = {
+    implicit val responsePayloadRW: upickle.default.ReadWriter[Contributor] =
+      upickle.default.macroRW[Contributor]
+    Try {
+      val contributors: List[Contributor] =
+        contributorsJson.map { contributorJson =>
+          upickle.default.read[Contributor](contributorJson)
+        }
+      contributors.sortBy(_.contributions).reverse
+    }.toEither.leftMap(_.toString)
   }
 
   line80.green pipe println

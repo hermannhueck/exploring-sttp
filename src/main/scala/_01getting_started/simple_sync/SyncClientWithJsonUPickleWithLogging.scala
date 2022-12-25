@@ -5,14 +5,15 @@ import util._
 
 import sttp.model.Uri
 import sttp.client3.{basicRequest, Request, Response, ResponseException, SimpleHttpClient, UriContext}
+import sttp.client3.logging.slf4j.Slf4jLoggingBackend
 import sttp.client3.upicklejson._
 import upickle.default._
 
-object SyncClientWithJsonMPickle extends App {
+object SyncClientWithJsonUPickleWithLogging extends App {
 
   line80.green pipe println
 
-  val client: SimpleHttpClient = SimpleHttpClient()
+  val client: SimpleHttpClient = SimpleHttpClient().wrapBackend(Slf4jLoggingBackend(_))
 
   case class MyRequest(field1: String, field2: Int)
   // selected fields from the JSON that is being returned by httpbin

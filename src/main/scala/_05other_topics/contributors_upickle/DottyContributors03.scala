@@ -1,4 +1,4 @@
-package _05other_topics.jsonsupport_upickle
+package _05other_topics.contributors_upickle
 
 import scala.util.chaining._
 import util._

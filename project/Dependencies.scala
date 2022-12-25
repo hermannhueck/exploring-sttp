@@ -24,6 +24,7 @@ object Dependencies {
   lazy val sttpZioJson    = "com.softwaremill.sttp.client3"         %% "zio-json"              % sttpVersion
   lazy val sttpJsoniter   = "com.softwaremill.sttp.client3"         %% "jsoniter"              % sttpVersion
   lazy val jsoniterMacros = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % jsoniterVersion
+  lazy val sttpHttp4s     = "com.softwaremill.sttp.client3"         %% "http4s-backend"        % sttpVersion
   lazy val slf4jApi       = "org.slf4j"                              % "slf4j-api"             % slf4jVersion
   lazy val slf4jSimple    = "org.slf4j"                              % "slf4j-simple"          % slf4jVersion
   lazy val munit          = "org.scalameta"                         %% "munit"                 % munitVersion
@@ -38,12 +39,13 @@ object Dependencies {
     compilerPlugin("com.olegpy" %% "better-monadic-for" % betterMonadicForVersion)
   )
 
-  val compilerrDependencies = Seq(
+  val compilerDependencies = Seq(
     sttpCore,
     sttpOkhttp,
     sttpUPickle,
     sttpSlf4j,
     sttpAkkaHttp,
+    akkaStream,
     sttpZio,
     sttpFs2,
     // sttpMonix,
@@ -55,7 +57,7 @@ object Dependencies {
     sttpZioJson,
     sttpJsoniter,
     jsoniterMacros,
-    akkaStream,
+    sttpHttp4s,
     circeGeneric,
     // circeCore,
     // circeParser,
@@ -69,5 +71,5 @@ object Dependencies {
 
   val pluginDependencies = Seq(kindProjectorPlugin, betterMonadicForPlugin)
 
-  val allDependencies = compilerrDependencies ++ testDependencies ++ pluginDependencies
+  val allDependencies = compilerDependencies ++ testDependencies ++ pluginDependencies
 }

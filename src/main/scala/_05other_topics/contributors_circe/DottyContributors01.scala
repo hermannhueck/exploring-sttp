@@ -1,17 +1,19 @@
-package _05other_topics.jsonsupport_upickle
+package _05other_topics.contributors_circe
 
 import scala.util.chaining._
 import util._
 
 import sttp.client3._
 
-object DottyContributors01b extends App {
+object DottyContributors01 extends App {
 
   line80.green pipe println
 
   val user = "lampepfl"
   val repo = "dotty"
   val uri  = uri"https://api.github.com/repos/$user/$repo/contributors"
+
+  final case class Contributor(login: String, contributions: Int)
 
   val request: Request[Either[String, String], Any] = basicRequest.get(uri)
 
@@ -20,6 +22,10 @@ object DottyContributors01b extends App {
   val response: Response[Either[String, String]] =
     request.send(backend)
 
+  // println(s"Response:\n$response")
+  // line10.cyan pipe println
+
+  // 'Serializable' is the common supertype of 'Error' and 'String'
   val result: Either[Serializable, List[Contributor]] = for {
     body         <- response.body
     contributors <- parseBody(body)
@@ -31,21 +37,26 @@ object DottyContributors01b extends App {
     case Right(contributors) =>
       // printContributors(s"$user/$repo", contributors)
       printContributorsSummary(s"$user/$repo", contributors.size, contributors.map(_.contributions).sum)
-      printMostBusyContributor(s"$user/$repo", contributors)
   }
 
+  import io.circe._
   import cats.implicits._
-  import scala.util.Try
 
-  def parseBody(body: String): Either[String, List[Contributor]] = {
-    implicit val responsePayloadRW: upickle.default.ReadWriter[Contributor] =
-      upickle.default.macroRW[Contributor]
-    Try {
-      val contributors: List[Contributor] =
-        upickle.default.read[List[Contributor]](body)
-      contributors.sortBy(_.contributions).reverse
-    }.toEither.leftMap(_.toString)
-  }
+  // parse body as JSON
+  def parseBody(body: String): Either[Error, List[Contributor]] =
+    for {
+      json             <- io.circe.parser.parse(body)
+      contributorsJson <- json.hcursor.as[List[Json]]
+      contributors     <- contributorsJson.traverse(contributorJson2Contributor)
+    } yield contributors
+      .sortBy(_.contributions)
+      .reverse
+
+  def contributorJson2Contributor(contributorJson: Json): Either[Error, Contributor] =
+    for {
+      login         <- contributorJson.hcursor.downField("login").as[String]
+      contributions <- contributorJson.hcursor.downField("contributions").as[Int]
+    } yield Contributor(login, contributions)
 
   line80.green pipe println
 }

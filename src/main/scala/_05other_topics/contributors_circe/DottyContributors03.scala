@@ -1,4 +1,4 @@
-package _05other_topics.jsonsupport_circe
+package _05other_topics.contributors_circe
 
 import scala.util.chaining._
 import util._

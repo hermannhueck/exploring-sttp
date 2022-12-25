@@ -6,7 +6,7 @@ import util._
 import sttp.model.Uri
 import sttp.client3.{basicRequest, Request, Response, SimpleHttpClient, UriContext}
 
-object SyncClientParseJson extends App {
+object SyncClientParseJsonCirceManual extends App {
 
   line80.green pipe println
 
@@ -30,9 +30,9 @@ object SyncClientParseJson extends App {
     case Right(body) =>
       println(s"BODY:\n${body}")
       s"$line10 Origin IP $line10".cyan pipe println
-      // processBody1(body)
-      // processBody2(body)
-      // processBody3(body)
+      processBody1(body)
+      processBody2(body)
+      processBody3(body)
       processBody4(body)
   }
 
@@ -72,7 +72,6 @@ object SyncClientParseJson extends App {
   }
 
   def processBody4(jsonString: String): Unit = {
-    case class Origin(origin: String)
     import io.circe.parser._
     parse(jsonString) match {
       case Left(error) =>
@@ -82,7 +81,7 @@ object SyncClientParseJson extends App {
           case None         =>
             println(s"Origin's ip not found")
           case Some(origin) =>
-            println(s"Origin's ip: ${origin}")
+            println(s"Origin's ip: ${origin.asString.get}")
         }
     }
   }

@@ -1,4 +1,4 @@
-package _05other_topics.jsonsupport_circe
+package _05other_topics.jsonsupport
 
 import scala.util.chaining._
 import util._
@@ -7,7 +7,7 @@ import sttp.client3._
 import sttp.client3.circe._
 import io.circe.generic.auto._
 
-object JsonSupportCirce extends App {
+object JsonSupportCirce1 extends App {
 
   import Model._
 

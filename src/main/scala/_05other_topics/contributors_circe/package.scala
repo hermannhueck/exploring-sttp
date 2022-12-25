@@ -3,7 +3,7 @@ package _05other_topics
 import scala.util.chaining._
 import util._
 
-package object jsonsupport_circe {
+package object contributors_circe {
 
   final case class Contributor(login: String, contributions: Int)
 

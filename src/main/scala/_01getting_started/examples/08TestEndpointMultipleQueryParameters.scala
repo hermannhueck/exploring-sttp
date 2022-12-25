@@ -19,22 +19,18 @@ object TestEndpointMultipleQueryParameters extends App {
       .thenRespond("42")
 
   val parameters1 = Map("filter" -> "name=mary", "sort" -> "asc")
-
-  println(
-    basicRequest
-      .get(uri"http://example.org?search=true&$parameters1")
-      .send(backend)
-      .body
-  )
+  basicRequest
+    .get(uri"http://example.org?search=true&$parameters1")
+    .send(backend)
+    .body
+    .pipe(println)
 
   val parameters2 = Map("sort" -> "desc")
-
-  println(
-    basicRequest
-      .get(uri"http://example.org/secret/read?$parameters2")
-      .send(backend)
-      .body
-  )
+  basicRequest
+    .get(uri"http://example.org/secret/read?$parameters2")
+    .send(backend)
+    .body
+    .pipe(println)
 
   line80.green pipe println
 }
