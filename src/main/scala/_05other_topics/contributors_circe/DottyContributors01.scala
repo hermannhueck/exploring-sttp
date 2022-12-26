@@ -13,19 +13,12 @@ object DottyContributors01 extends App {
   val repo = "dotty"
   val uri  = uri"https://api.github.com/repos/$user/$repo/contributors"
 
-  final case class Contributor(login: String, contributions: Int)
+  val request: Request[Either[String, String], Any] =
+    basicRequest.get(uri)
 
-  val request: Request[Either[String, String], Any] = basicRequest.get(uri)
-
-  val backend: SttpBackend[Identity, Any]        =
-    HttpClientSyncBackend()
   val response: Response[Either[String, String]] =
-    request.send(backend)
+    SimpleHttpClient().send(request)
 
-  // println(s"Response:\n$response")
-  // line10.cyan pipe println
-
-  // 'Serializable' is the common supertype of 'Error' and 'String'
   val result: Either[Serializable, List[Contributor]] = for {
     body         <- response.body
     contributors <- parseBody(body)
@@ -37,13 +30,13 @@ object DottyContributors01 extends App {
     case Right(contributors) =>
       // printContributors(s"$user/$repo", contributors)
       printContributorsSummary(s"$user/$repo", contributors.size, contributors.map(_.contributions).sum)
+      printMostBusyContributor(s"$user/$repo", contributors)
   }
 
   import io.circe._
-  import cats.implicits._
+  import cats.implicits._ // for traverse and leftMap
 
-  // parse body as JSON
-  def parseBody(body: String): Either[Error, List[Contributor]] =
+  def parseBody(body: String): Either[String, List[Contributor]] = {
     for {
       json             <- io.circe.parser.parse(body)
       contributorsJson <- json.hcursor.as[List[Json]]
@@ -51,6 +44,7 @@ object DottyContributors01 extends App {
     } yield contributors
       .sortBy(_.contributions)
       .reverse
+  }.leftMap(_.toString)
 
   def contributorJson2Contributor(contributorJson: Json): Either[Error, Contributor] =
     for {

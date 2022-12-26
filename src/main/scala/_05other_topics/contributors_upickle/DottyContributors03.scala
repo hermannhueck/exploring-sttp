@@ -14,7 +14,7 @@ object DottyContributors03 extends App {
   val repo = "dotty"
   val uri  = uri"https://api.github.com/repos/$user/$repo/contributors"
 
-  implicit val responsePayloadRW: upickle.default.ReadWriter[Contributor] =
+  implicit val contributorRW: upickle.default.ReadWriter[Contributor] =
     upickle.default.macroRW[Contributor]
 
   val request: Request[Either[ResponseException[String, Exception], List[Contributor]], Any] =
@@ -22,10 +22,8 @@ object DottyContributors03 extends App {
       .get(uri)
       .response(asJson[List[Contributor]])
 
-  val backend: SttpBackend[Identity, Any]                                                 =
-    HttpClientSyncBackend()
   val response: Response[Either[ResponseException[String, Exception], List[Contributor]]] =
-    request.send(backend)
+    SimpleHttpClient().send(request)
 
   response.body match {
     case Left(error)         =>

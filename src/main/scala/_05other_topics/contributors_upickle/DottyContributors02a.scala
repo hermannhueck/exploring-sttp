@@ -14,7 +14,7 @@ object DottyContributors02a extends App {
   val repo = "dotty"
   val uri  = uri"https://api.github.com/repos/$user/$repo/contributors"
 
-  implicit val responsePayloadRW: upickle.default.ReadWriter[ujson.Arr] =
+  implicit val jsonArrayRW: upickle.default.ReadWriter[ujson.Arr] =
     upickle.default.macroRW[ujson.Arr]
 
   val request: Request[Either[ResponseException[String, Exception], List[ujson.Value]], Any] =
@@ -22,10 +22,8 @@ object DottyContributors02a extends App {
       .get(uri)
       .response(asJson[List[ujson.Value]])
 
-  val backend: SttpBackend[Identity, Any]                                                 =
-    HttpClientSyncBackend()
   val response: Response[Either[ResponseException[String, Exception], List[ujson.Value]]] =
-    request.send(backend)
+    SimpleHttpClient().send(request)
 
   import cats.implicits._
 

@@ -22,10 +22,8 @@ object DottyContributors02b extends App {
       .get(uri)
       .response(asJson[List[ujson.Value]])
 
-  val backend: SttpBackend[Identity, Any]                                                 =
-    HttpClientSyncBackend()
   val response: Response[Either[ResponseException[String, Exception], List[ujson.Value]]] =
-    request.send(backend)
+    SimpleHttpClient().send(request)
 
   import cats.implicits._
 
@@ -46,7 +44,7 @@ object DottyContributors02b extends App {
   import scala.util.Try
 
   def parseBody(contributorsJson: List[ujson.Value]): Either[String, List[Contributor]] = {
-    implicit val responsePayloadRW: upickle.default.ReadWriter[Contributor] =
+    implicit val contributorRW: upickle.default.ReadWriter[Contributor] =
       upickle.default.macroRW[Contributor]
     Try {
       val contributors: List[Contributor] =

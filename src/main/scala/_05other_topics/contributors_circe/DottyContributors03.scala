@@ -15,17 +15,13 @@ object DottyContributors03 extends App {
   val repo = "dotty"
   val uri  = uri"https://api.github.com/repos/$user/$repo/contributors"
 
-  final case class Contributor(login: String, contributions: Int)
-
   val request: Request[Either[ResponseException[String, io.circe.Error], List[Contributor]], Any] =
     basicRequest
       .get(uri)
       .response(asJson[List[Contributor]])
 
-  val backend: SttpBackend[Identity, Any]                                                      =
-    HttpClientSyncBackend()
   val response: Response[Either[ResponseException[String, io.circe.Error], List[Contributor]]] =
-    request.send(backend)
+    SimpleHttpClient().send(request)
 
   response.body match {
     case Left(error)         =>
@@ -33,6 +29,7 @@ object DottyContributors03 extends App {
     case Right(contributors) =>
       // printContributors(s"$user/$repo", contributors)
       printContributorsSummary(s"$user/$repo", contributors.size, contributors.map(_.contributions).sum)
+      printMostBusyContributor(s"$user/$repo", contributors)
   }
 
   line80.green pipe println

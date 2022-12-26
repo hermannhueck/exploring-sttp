@@ -6,6 +6,7 @@ import util._
 import sttp.client3._
 import sttp.client3.circe._
 import io.circe._
+import cats.implicits._ // for traverse and leftMap
 
 object DottyContributors02 extends App {
 
@@ -15,24 +16,16 @@ object DottyContributors02 extends App {
   val repo = "dotty"
   val uri  = uri"https://api.github.com/repos/$user/$repo/contributors"
 
-  final case class Contributor(login: String, contributions: Int)
-
   val request: Request[Either[ResponseException[String, io.circe.Error], List[Json]], Any] =
     basicRequest
       .get(uri)
       .response(asJson[List[Json]])
 
-  val backend: SttpBackend[Identity, Any]                                               =
-    HttpClientSyncBackend()
   val response: Response[Either[ResponseException[String, io.circe.Error], List[Json]]] =
-    request.send(backend)
+    SimpleHttpClient().send(request)
 
-  // println(s"Response:\n$response")
-  // line10.cyan pipe println
-
-  // 'Serializable' is the common supertype of 'Error' and 'String'
-  val result: Either[Serializable, List[Contributor]] = for {
-    body         <- response.body
+  val result: Either[String, List[Contributor]] = for {
+    body         <- response.body.leftMap(_.toString)
     contributors <- parseBody(body)
   } yield contributors
 
@@ -42,17 +35,16 @@ object DottyContributors02 extends App {
     case Right(contributors) =>
       // printContributors(s"$user/$repo", contributors)
       printContributorsSummary(s"$user/$repo", contributors.size, contributors.map(_.contributions).sum)
+      printMostBusyContributor(s"$user/$repo", contributors)
   }
 
-  import cats.implicits._
-
-  // parse body as JSON
-  def parseBody(contributorsJson: List[Json]) = // : Either[Error, List[Contributor]] =
+  def parseBody(contributorsJson: List[Json]): Either[String, List[Contributor]] =
     contributorsJson
       .traverse(contributorJson2Contributor)
       .map { contributors =>
         contributors.sortBy(_.contributions).reverse
       }
+      .leftMap(_.toString)
 
   def contributorJson2Contributor(contributorJson: Json): Either[Error, Contributor] =
     for {

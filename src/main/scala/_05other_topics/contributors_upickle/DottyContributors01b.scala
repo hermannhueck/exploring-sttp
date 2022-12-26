@@ -13,12 +13,11 @@ object DottyContributors01b extends App {
   val repo = "dotty"
   val uri  = uri"https://api.github.com/repos/$user/$repo/contributors"
 
-  val request: Request[Either[String, String], Any] = basicRequest.get(uri)
+  val request: Request[Either[String, String], Any] =
+    basicRequest.get(uri)
 
-  val backend: SttpBackend[Identity, Any]        =
-    HttpClientSyncBackend()
   val response: Response[Either[String, String]] =
-    request.send(backend)
+    SimpleHttpClient().send(request)
 
   val result: Either[String, List[Contributor]] = for {
     body         <- response.body
@@ -38,7 +37,7 @@ object DottyContributors01b extends App {
   import scala.util.Try
 
   def parseBody(body: String): Either[String, List[Contributor]] = {
-    implicit val responsePayloadRW: upickle.default.ReadWriter[Contributor] =
+    implicit val contributorRW: upickle.default.ReadWriter[Contributor] =
       upickle.default.macroRW[Contributor]
     Try {
       val contributors: List[Contributor] =
