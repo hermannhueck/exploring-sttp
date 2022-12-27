@@ -23,8 +23,11 @@ object LogRequestsSlf4j extends App {
     Slf4jLoggingBackend(
       HttpClientSyncBackend(),
       includeTiming = true,
+      beforeCurlInsteadOfShow = false,
       logRequestBody = false,
-      logResponseBody = false
+      logRequestHeaders = false,
+      logResponseBody = false,
+      logResponseHeaders = false
     )
 
   try {
