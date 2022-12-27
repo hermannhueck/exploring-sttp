@@ -3,8 +3,8 @@ package _01getting_started.examples
 import scala.util.chaining._
 import util._
 
-import sttp.capabilities.zio.ZioStreams
 import sttp.client3._
+import sttp.capabilities.zio.ZioStreams
 import sttp.client3.httpclient.zio.HttpClientZioBackend
 import zio.Console._
 import zio._
@@ -28,13 +28,15 @@ object StreamZio extends ZIOAppDefault {
   }
 
   def streamResponseBody(backend: SttpBackend[Task, ZioStreams]): Task[Unit] = {
+
+    val request =
+      basicRequest
+        .body("I want a stream!")
+        .post(uri"https://httpbin.org/post")
+        .response(asStreamAlways(ZioStreams)(_.via(ZPipeline.utf8Decode).runFold("")(_ + _)))
+
     backend
-      .send(
-        basicRequest
-          .body("I want a stream!")
-          .post(uri"https://httpbin.org/post")
-          .response(asStreamAlways(ZioStreams)(_.via(ZPipeline.utf8Decode).runFold("")(_ + _)))
-      )
+      .send(request)
       .flatMap { response => printLine(s"RECEIVED:\n${response.body}\n${line80.green}") }
   }
 

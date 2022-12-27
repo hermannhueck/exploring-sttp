@@ -13,8 +13,9 @@ object Versions {
   val newTypeVersion  = "0.4.4"
   val circeVersion    = "0.14.3"
   val munitVersion    = "0.7.29"
-  val jsoniterVersion = "2.19.1"
+  val jsoniterVersion = "2.20.0"
   val slf4jVersion    = "2.0.6"
+  val http4sVersion   = "0.23.13"
 
   // compiler plugins
   val kindProjectorVersion    = "0.13.2"
