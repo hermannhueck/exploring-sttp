@@ -26,8 +26,10 @@ object Dependencies {
   lazy val sttpJsoniter      = "com.softwaremill.sttp.client3"         %% "jsoniter"              % sttpVersion
   lazy val jsoniterMacros    = "com.github.plokhotnyuk.jsoniter-scala" %% "jsoniter-scala-macros" % jsoniterVersion
   lazy val sttpHttp4s        = "com.softwaremill.sttp.client3"         %% "http4s-backend"        % sttpVersion
-  lazy val http4sBlazeClient = "org.http4s"                            %% "http4s-blaze-client"   % http4sVersion
   // lazy val sttpHttp4s     = "com.softwaremill.sttp.client3"         %% "http4s-ce2-backend"    % sttpVersion
+  lazy val http4sBlazeClient = "org.http4s"                            %% "http4s-blaze-client"   % http4sVersion
+  lazy val http4sEmberClient = "org.http4s"                            %% "http4s-ember-client"   % http4sVersion
+  lazy val http4sCirce       = "org.http4s"                            %% "http4s-circe"          % http4sVersion
   lazy val slf4jApi          = "org.slf4j"                              % "slf4j-api"             % slf4jVersion
   lazy val slf4jSimple       = "org.slf4j"                              % "slf4j-simple"          % slf4jVersion
   lazy val munit             = "org.scalameta"                         %% "munit"                 % munitVersion
@@ -62,6 +64,8 @@ object Dependencies {
     jsoniterMacros,
     sttpHttp4s,
     http4sBlazeClient,
+    http4sEmberClient,
+    http4sCirce,
     circeGeneric,
     // circeCore,
     // circeParser,
